@@ -1,26 +1,27 @@
-package testsmell;
+package file_mapping;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.List;
 
 /**
  * This class is utilized to write output to a CSV file
  */
-public class ResultsWriter {
+public class MappingResultsWriter {
 
     private String outputFile;
+    private String repoName;
     private FileWriter writer;
 
     /**
      * Creates the file into which output it to be written into. Results from each file will be stored in a new file
      * @throws IOException
      */
-    private ResultsWriter(String repoName) throws IOException {
-        String time =  String.valueOf(Calendar.getInstance().getTimeInMillis());
-        outputFile = MessageFormat.format("{0}/{1}.{2}", "results/smells", repoName, "csv");
+    private MappingResultsWriter(String repoName) throws IOException {
+        this.repoName = repoName;
+//        String time =  String.valueOf(Calendar.getInstance().getTimeInMillis());
+        outputFile = MessageFormat.format("{0}/{1}.{2}", "results/mappings", repoName, "csv");
         writer = new FileWriter(outputFile,false);
     }
 
@@ -29,8 +30,8 @@ public class ResultsWriter {
      * @return new ResultsWriter instance
      * @throws IOException
      */
-    public static ResultsWriter createResultsWriter(String repoName) throws IOException {
-        return new ResultsWriter(repoName);
+    public static MappingResultsWriter createResultsWriter(String repoName) throws IOException {
+        return new MappingResultsWriter(repoName);
     }
 
     /**
@@ -58,7 +59,8 @@ public class ResultsWriter {
      */
     private void writeOutput(List<String> dataValues)throws IOException {
         writer = new FileWriter(outputFile,true);
-
+        writer.append(repoName);
+        writer.append(",");
         for (int i=0; i<dataValues.size(); i++) {
             writer.append(String.valueOf(dataValues.get(i)));
 
@@ -72,3 +74,4 @@ public class ResultsWriter {
         writer.close();
     }
 }
+
