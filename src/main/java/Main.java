@@ -1,11 +1,10 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import file_detector.FileWalker;
 import file_mapping.MappingResultsWriter;
 import file_mapping.MappingTestFile;
 import file_mapping.MappingDetector;
-import testsmell.AbstractSmell;
-import testsmell.ResultsWriter;
-import testsmell.TestFile;
-import testsmell.TestSmellDetector;
+import testsmell.*;
 import thresholds.DefaultThresholds;
 
 import java.io.BufferedReader;
@@ -120,6 +119,7 @@ public class Main {
         TestFile tempFile;
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         Date date;
+        SmellRecorder smellRecorder = new SmellRecorder();
         for (TestFile file : testFiles) {
             date = new Date();
             System.out.println(dateFormat.format(date) + " Processing: " + file.getTestFilePath());
@@ -127,6 +127,7 @@ public class Main {
 
             //detect smells
             tempFile = testSmellDetector.detectSmells(file);
+            smellRecorder.addTestFileData(file);
 
             //write output
             columnValues = new ArrayList<>();
@@ -146,7 +147,7 @@ public class Main {
             }
             resultsWriter.writeLine(columnValues);
         }
-
+        smellRecorder.recordSmells(repoName);
         System.out.println("Smell Detection Finished");
     }
 

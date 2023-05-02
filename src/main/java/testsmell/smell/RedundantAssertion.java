@@ -50,7 +50,8 @@ public class RedundantAssertion extends AbstractSmell {
         public void visit(MethodDeclaration n, Void arg) {
             if (Util.isValidTestMethod(n)) {
                 currentMethod = n;
-                testMethod = new TestMethod(n.getNameAsString());
+                testMethod = new TestMethod(n.getNameAsString(), n.getRange().get().begin.line,
+                        n.getRange().get().end.line);
                 testMethod.setSmell(false); //default value is false (i.e. no smell)
                 super.visit(n, arg);
 

@@ -104,7 +104,8 @@ public class EagerTest extends AbstractSmell {
             if (Objects.equals(fileType, TEST_FILE)) {
                 if (Util.isValidTestMethod(n)) {
                     currentMethod = n;
-                    testMethod = new TestMethod(currentMethod.getNameAsString());
+                    testMethod = new TestMethod(currentMethod.getNameAsString(), n.getRange().get().begin.line,
+                            n.getRange().get().end.line);
                     testMethod.setSmell(false); //default value is false (i.e. no smell)
                     super.visit(n, arg);
 

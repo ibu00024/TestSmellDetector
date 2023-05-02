@@ -6,11 +6,15 @@ import java.util.Map;
 public class TestClass extends SmellyElement {
 
     private String className;
+    private int beginLine;
+    private int endLine;
     private boolean hasSmell;
     private Map<String, String> data;
 
-    public TestClass(String className) {
+    public TestClass(String className, int beginLine, int endLine) {
         this.className = className;
+        this.beginLine = beginLine;
+        this.endLine = endLine;
         data = new HashMap<>();
     }
 
@@ -21,7 +25,10 @@ public class TestClass extends SmellyElement {
     public void addDataItem(String name, String value) {
         data.put(name, value);
     }
-
+    @Override
+    public int getBeginLine() { return beginLine; }
+    @Override
+    public int getEndLine() { return endLine; }
     @Override
     public String getElementName() {
         return className;

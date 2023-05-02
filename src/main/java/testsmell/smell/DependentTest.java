@@ -40,7 +40,8 @@ public class DependentTest extends AbstractSmell {
 
         for (TestMethod testMethod : testMethods) {
             if (testMethod.getCalledMethods().stream().anyMatch(x -> x.getName().equals(testMethods.stream().map(z -> z.getMethodDeclaration().getNameAsString())))) {
-                smellyElementsSet.add(new testsmell.TestMethod(testMethod.getMethodDeclaration().getNameAsString()));
+                smellyElementsSet.add(new testsmell.TestMethod(testMethod.getMethodDeclaration().getNameAsString(), testMethod.getMethodDeclaration().getRange().get().begin.line,
+                        testMethod.getMethodDeclaration().getRange().get().end.line));
             }
         }
 

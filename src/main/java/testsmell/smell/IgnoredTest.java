@@ -51,7 +51,8 @@ public class IgnoredTest extends AbstractSmell {
         @Override
         public void visit(ClassOrInterfaceDeclaration n, Void arg) {
             if (n.getAnnotationByName("Ignore").isPresent()) {
-                testClass = new TestClass(n.getNameAsString());
+                testClass = new TestClass(n.getNameAsString(), n.getRange().get().begin.line,
+                        n.getRange().get().end.line);
                 testClass.setHasSmell(true);
                 smellyElementsSet.add(testClass);
             }
@@ -68,7 +69,8 @@ public class IgnoredTest extends AbstractSmell {
             //check if test method has Ignore annotation
             if (n.getAnnotationByName("Test").isPresent()) {
                 if (n.getAnnotationByName("Ignore").isPresent()) {
-                    testMethod = new TestMethod(n.getNameAsString());
+                    testMethod = new TestMethod(n.getNameAsString(), n.getRange().get().begin.line,
+                            n.getRange().get().end.line);
                     testMethod.setSmell(true);
                     smellyElementsSet.add(testMethod);
                     return;
@@ -79,7 +81,8 @@ public class IgnoredTest extends AbstractSmell {
             //check if test method is not public
             if (n.getNameAsString().toLowerCase().startsWith("test")) {
                 if (!n.getModifiers().contains(Modifier.PUBLIC)) {
-                    testMethod = new TestMethod(n.getNameAsString());
+                    testMethod = new TestMethod(n.getNameAsString(), n.getRange().get().begin.line,
+                            n.getRange().get().end.line);
                     testMethod.setSmell(true);
                     smellyElementsSet.add(testMethod);
                     return;
