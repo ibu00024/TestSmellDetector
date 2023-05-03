@@ -72,7 +72,8 @@ public class SmellRecorder {
             for (AbstractSmell smell : testFile.getTestSmells()) {
                 if (smell != null && smell.hasSmell()) {
                     for (SmellyElement element : smell.getSmellyElements()) {
-                        smellsInFile.add(new SmellItem(smell.getSmellName(), element));
+                        if (element.isSmelly())
+                            smellsInFile.add(new SmellItem(smell.getSmellName(), element));
                     }
                 }
             }
