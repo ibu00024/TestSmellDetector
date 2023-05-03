@@ -87,5 +87,7 @@ public class SmellRecorder {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
         gson.toJson(testFiles, writer);
+        writer.flush();
+        writer.close();
     }
 }
