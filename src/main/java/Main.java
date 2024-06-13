@@ -39,6 +39,7 @@ public class Main {
 
         final String rootDirectory = projectDir;
         repoName = rootDirectory.substring(rootDirectory.lastIndexOf(rootDirectoryName) + rootDirectoryName.length() + 1);
+        System.out.println("Parsing project: " + repoName);
 
         // Retrieve test code files
         FileWalker fw = new FileWalker();
@@ -56,11 +57,7 @@ public class Main {
             }
         }
 
-        for (MappingTestFile testFile : testFiles) {
-            System.out.println("Test File: " + testFile.getTestFilePath());
-        }
-
-        System.out.println("Saving results. Total lines:" + testFiles.size());
+        System.out.println("Saving results. Total lines: " + testFiles.size());
         MappingResultsWriter resultsWriter = MappingResultsWriter.createResultsWriter(repoName);
         List<String> columnValues = null;
         for (int i = 0; i < testFiles.size(); i++) {
@@ -70,7 +67,7 @@ public class Main {
             resultsWriter.writeLine(columnValues);
         }
 
-        System.out.println("Test File Mapping Completed!");
+        System.out.println("Test File Mapping Completed to \n    results/mappings/" + repoName + ".csv");
     }
 
     // Retrieve test files under a specific source directory
@@ -187,7 +184,7 @@ public class Main {
             resultsWriter.writeLine(columnValues);
         }
         smellRecorder.recordSmells(repoName);
-        System.out.println("Smell Detection Finished");
+        System.out.println("Smell Detection Finished to \n    results/smells/" + repoName + ".csv");
     }
 
     public static void main(String[] args) throws IOException {
