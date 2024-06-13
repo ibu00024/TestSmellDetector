@@ -26,36 +26,38 @@ public class Main {
     static List<MappingTestFile> testFiles;
     static String repoName;
 
-    public static void detectMappings(String projectDir, String srcDir) throws IOException {
+    public static void detectMappings(String projectDir, List<String> searchStrings, String rootDirectoryName) throws IOException {
         File inputFile = new File(projectDir);
         if(!inputFile.exists() || !inputFile.isDirectory()) {
             System.out.println("Please provide a valid path to the project directory");
             return;
         }
 
-        File srcFolder;
-        if(!Objects.equals(srcDir, "")){
-            srcFolder = new File(srcDir);
-        } else {
-            srcFolder = new File(inputFile, "src/main");
-        }
-        if(!srcFolder.exists() || !srcFolder.isDirectory()) {
-            System.out.println("Please provide a valid path to the source directory");
-            return;
-        }
+        // The project may have multiple source directories, so list them
+        List<File> srcFolders = new ArrayList<>();
+        findSrcFolders(inputFile, srcFolders);
+
         final String rootDirectory = projectDir;
-        repoName = rootDirectory.substring(rootDirectory.lastIndexOf("repos/")+6);
-        MappingDetector mappingDetector;
+        repoName = rootDirectory.substring(rootDirectory.lastIndexOf(rootDirectoryName) + rootDirectoryName.length() + 1);
+        System.out.println("Parsing project: " + repoName);
+
+        // Retrieve test code files
         FileWalker fw = new FileWalker();
-        List<Path> files = fw.getJavaTestFiles(rootDirectory, true);
+        List<Path> files = fw.getJavaTestFiles(rootDirectory, true, searchStrings);
+
+        // Map test code to production code
         testFiles = new ArrayList<>();
-        for (Path testPath : files) {
-            mappingDetector = new MappingDetector();
-            String str =  srcFolder.getAbsolutePath()+","+testPath.toAbsolutePath();
-            testFiles.add(mappingDetector.detectMapping(str));
+        for (File srcFolder : srcFolders) {
+            List<Path> specificTestFiles = getTestFilesUnderSrcFolder(srcFolder.toPath(), files);
+            for (Path testPath : specificTestFiles) {
+                MappingDetector mappingDetector = new MappingDetector();
+                String str = srcFolder.getAbsolutePath() + "," + testPath.toAbsolutePath();
+                MappingTestFile mappingTestFile = mappingDetector.detectMapping(str);
+                testFiles.add(mappingTestFile);
+            }
         }
 
-        System.out.println("Saving results. Total lines:" + testFiles.size());
+        System.out.println("Saving results. Total lines: " + testFiles.size());
         MappingResultsWriter resultsWriter = MappingResultsWriter.createResultsWriter(repoName);
         List<String> columnValues = null;
         for (int i = 0; i < testFiles.size(); i++) {
@@ -65,7 +67,41 @@ public class Main {
             resultsWriter.writeLine(columnValues);
         }
 
-        System.out.println("Test File Mapping Completed!");
+        System.out.println("Test File Mapping Completed to \n    results/mappings/" + repoName + ".csv");
+    }
+
+    // Retrieve test files under a specific source directory
+    private static List<Path> getTestFilesUnderSrcFolder(Path srcFolder, List<Path> allTestFiles) {
+        List<Path> specificTestFiles = new ArrayList<>();
+        for (Path testFile : allTestFiles) {
+            if (testFile.startsWith(srcFolder.getParent())) { // HACK: Removing '/main' from the srcFolder path
+                specificTestFiles.add(testFile);
+            }
+        }
+        return specificTestFiles;
+    }
+
+    // Find 'src/main' directories in the project
+    private static void findSrcFolders(File file, List<File> srcFolders) {
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files == null) {
+                return;
+            }
+            for (File f : files) {
+                if (f.isDirectory()) {
+                    if (f.getName().equals("src")) {
+                        // When the src folder is found, look for the main directory
+                        File mainDir = new File(f, "main"); // NOTE: Change this part manually during analysis (e.g., "org" for argouml)
+                        if (mainDir.exists() && mainDir.isDirectory()) {
+                            srcFolders.add(mainDir);
+                        }
+                    }
+                    // Recursively call for subdirectories
+                    findSrcFolders(f, srcFolders);
+                }
+            }
+        }
     }
 
     public static void detectSmells() throws IOException {
@@ -122,8 +158,8 @@ public class Main {
         SmellRecorder smellRecorder = new SmellRecorder();
         for (TestFile file : testFiles) {
             date = new Date();
-            System.out.println(dateFormat.format(date) + " Processing: " + file.getTestFilePath());
-            System.out.println("Processing: " + file.getTestFilePath());
+            // System.out.println(dateFormat.format(date) + " Processing: " + file.getTestFilePath());
+            // System.out.println("Processing: " + file.getTestFilePath());
 
             //detect smells
             tempFile = testSmellDetector.detectSmells(file);
@@ -148,24 +184,23 @@ public class Main {
             resultsWriter.writeLine(columnValues);
         }
         smellRecorder.recordSmells(repoName);
-        System.out.println("Smell Detection Finished");
+        System.out.println("Smell Detection Finished to \n    results/smells/" + repoName + ".csv");
     }
 
     public static void main(String[] args) throws IOException {
         Files.createDirectories(Paths.get("results/mappings"));
         Files.createDirectories(Paths.get("results/smells"));
 
-        if (args == null || args.length == 0) {
-            System.out.println("Please provide the path to the project directory");
-            return;
+
+        String projectDir = args[0];
+        String rootDirectoryName = args[1];
+        int stringCount = Integer.parseInt(args[2]);
+        List<String> searchStrings = new ArrayList<>();
+        for (int i = 0; i < stringCount; i++) {
+            searchStrings.add(args[i + 3]);
         }
-        if (!args[0].isEmpty()) {
-            if(args.length>1 && !args[1].isEmpty()){
-                detectMappings(args[0], args[1]);
-            } else {
-                detectMappings(args[0], "");
-            }
-        }
+
+        detectMappings(projectDir,  searchStrings, rootDirectoryName);
         detectSmells();
     }
 }
