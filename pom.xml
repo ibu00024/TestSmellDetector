@@ -105,10 +105,12 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <finalName>TestSmellDetector</finalName>
                             <archive>
                                 <manifest>
                                     <mainClass>
-                                        testsmell.RunnerKt
+                                        Main
                                     </mainClass>
                                 </manifest>
                             </archive>
