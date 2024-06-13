@@ -29,24 +29,31 @@ public class MappingDetector {
         String[] data = testFilePath.split(",");
         testFile = new MappingTestFile(data[0], data[1]);
         String[] testData = data[1].split("/");
-        productionFileFolder = testData[testData.length-2];
+        productionFileFolder = testData[testData.length - 2];
         int index = testFile.getFileName().toLowerCase().lastIndexOf("test");
+        // System.out.println("index: " + testFile.getFileName().toLowerCase());
+
         if (index == 0) {
             //the name of the test file starts with the name 'test'
             productionFileName = testFile.getFileName().substring(4);
-        } else {
+        } else if (index > 0) {
             //the name of the test file ends with the name 'test'
-            productionFileName = testFile.getFileName().substring(0, testFile.getFileName().toLowerCase().lastIndexOf("test")) + ".java";
-//            System.out.println("production file name: " + productionFileName + "/n test: " + productionFileFolder);
+            productionFileName = testFile.getFileName().substring(0, index) + ".java";
+        } else {
+            // test file name does not contain the name 'test'
+            testFile.setProductionFilePath("");
+            return testFile;
         }
 
         Path startDir = Paths.get(testFile.getProjectRootFolder());
         Files.walkFileTree(startDir, new FindJavaTestFilesVisitor());
 
-        if (isFileSyntacticallyValid(productionFilePath))
+        if (isFileSyntacticallyValid(productionFilePath)) {
             testFile.setProductionFilePath(productionFilePath);
-        else
+        }
+        else {
             testFile.setProductionFilePath("");
+        }
 
         return testFile;
     }
