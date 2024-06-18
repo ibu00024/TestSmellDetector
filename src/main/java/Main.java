@@ -162,7 +162,11 @@ public class Main {
             // System.out.println("Processing: " + file.getTestFilePath());
 
             //detect smells
-            tempFile = testSmellDetector.detectSmells(file);
+            try {
+                tempFile = testSmellDetector.detectSmells(file);
+            } catch (Exception e) {
+                continue; // Syntax errors are skipped
+            }
             smellRecorder.addTestFileData(file);
 
             //write output
