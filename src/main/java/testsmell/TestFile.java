@@ -2,6 +2,8 @@ package testsmell;
 
 import org.apache.commons.lang3.StringUtils;
 
+// import com.github.ajalt.clikt.completion.CompletionCandidates.Path;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,12 +85,15 @@ public class TestFile {
      */
     public String getRelativeTestFilePath() {
         if (!StringUtils.isEmpty(testFilePath)) {
-            int projectNameIndex = testFilePath.lastIndexOf(app);
+            int projectNameIndex = testFilePath.indexOf(app);
             if (projectNameIndex == -1)
                 return "";
-            return testFilePath.substring(projectNameIndex + app.length() + File.separator.length());
-        } else
+            
+            String relativePath = testFilePath.substring(projectNameIndex + app.length());
+            return relativePath;
+        } else {
             return "";
+        }
     }
 
     /**
