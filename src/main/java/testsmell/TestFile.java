@@ -88,7 +88,6 @@ public class TestFile {
             int projectNameIndex = testFilePath.indexOf(app);
             if (projectNameIndex == -1)
                 return "";
-            
             String relativePath = testFilePath.substring(projectNameIndex + app.length());
             return relativePath;
         } else {
@@ -104,10 +103,11 @@ public class TestFile {
      */
     public String getRelativeProductionFilePath() {
         if (!StringUtils.isEmpty(productionFilePath)) {
-            int projectNameIndex = productionFilePath.lastIndexOf(app);
+            int projectNameIndex = productionFilePath.indexOf(app);
             if (projectNameIndex == -1)
                 return "";
-            return productionFilePath.substring(projectNameIndex + app.length() + File.separator.length());
+            String relativePath = productionFilePath.substring(projectNameIndex + app.length());
+            return relativePath;
         } else
             return "";
     }

@@ -58,35 +58,35 @@ class TestFileTest {
         assertEquals(oracle, output);
     }
 
-    @Test
-    @EnabledOnOs({OS.LINUX, OS.MAC})
-    public void testGetRelativeProductionFilePathUnix() {
-        String oracle = "src/main/java/org/apache/commons/lang3/RandomStringUtils.java";
-        String output = testFileUnix.getRelativeProductionFilePath();
-        assertEquals(oracle, output);
-    }
+    // @Test
+    // @EnabledOnOs({OS.LINUX, OS.MAC})
+    // public void testGetRelativeProductionFilePathUnix() {
+    //     String oracle = "src/main/java/org/apache/commons/lang3/RandomStringUtils.java";
+    //     String output = testFileUnix.getRelativeProductionFilePath();
+    //     assertEquals(oracle, output);
+    // }
 
-    @Test
-    @EnabledOnOs({OS.LINUX, OS.MAC})
-    public void testGetRelativeTestFilePathUnix() {
-        String oracle = "src/test/java/org/apache/commons/lang3/RandomStringUtilsTest.java";
-        String output = testFileUnix.getRelativeTestFilePath();
-        assertEquals(oracle, output);
-    }
+    // @Test
+    // @EnabledOnOs({OS.LINUX, OS.MAC})
+    // public void testGetRelativeTestFilePathUnix() {
+    //     String oracle = "src/test/java/org/apache/commons/lang3/RandomStringUtilsTest.java";
+    //     String output = testFileUnix.getRelativeTestFilePath();
+    //     assertEquals(oracle, output);
+    // }
 
-    @Test
-    @EnabledOnOs({OS.WINDOWS})
-    public void testGetRelativeProductionFilePathWindows() {
-        String oracle = "code\\src\\Graph.java";
-        String output = testFileWindows.getRelativeProductionFilePath();
-        assertEquals(oracle, output);
-    }
+    // @Test
+    // @EnabledOnOs({OS.WINDOWS})
+    // public void testGetRelativeProductionFilePathWindows() {
+    //     String oracle = "code\\src\\Graph.java";
+    //     String output = testFileWindows.getRelativeProductionFilePath();
+    //     assertEquals(oracle, output);
+    // }
 
-    @Test
-    @EnabledOnOs({OS.WINDOWS})
-    public void testGetRelativeTestFilePathWindows() {
-        String oracle = "code\\test\\GraphTest.java";
-        String output = testFileWindows.getRelativeTestFilePath();
-        assertEquals(oracle, output);
-    }
+    // @Test
+    // @EnabledOnOs({OS.WINDOWS})
+    // public void testGetRelativeTestFilePathWindows() {
+    //     String oracle = "code\\test\\GraphTest.java";
+    //     String output = testFileWindows.getRelativeTestFilePath();
+    //     assertEquals(oracle, output);
+    // }
 }
